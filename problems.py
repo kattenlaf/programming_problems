@@ -414,15 +414,44 @@ class Solution:
 
         return root
 
+    def intToRoman(self, num: int) -> str:
+        solution = []
+        places = [["I", "V", "X"], ["X", "L", "C"], ["C", "D", "M"], ["M"]]
+        places_pos = 0
+        while num != 0:
+            current_str = ""
+            digit = num % 10
+            num //= 10
+            if digit == 4 or digit == 9:
+                # handle differently
+                current_str += places[places_pos][0]
+                current_str += places[places_pos][1] if digit == 4 else places[places_pos][2]
+            else:
+                # the digit is not a 4 or 9, check if greater than 5, if yes we append the 5 value at that places
+                # position first, then add the number of 10s place values
+                if digit >= 5:
+                    digit -= 5
+                    current_str += places[places_pos][1]
+                for j in range(digit):
+                    current_str += places[places_pos][0]
+
+            solution.append(current_str)
+            places_pos += 1
+
+        solution_string = ""
+        k = len(solution) - 1
+        while k >= 0:
+            solution_string += solution[k]
+            k -= 1
+
+        return solution_string
+
+            # with the digit map it to the value we expect to append to the string
+
+
 
 solutions = Solution()
-
-nums = ['XXXX' , 'XX' , 'XXXXXX']
-visited = []
-for i in range(len(nums)):
-    visited.append([False] * len(nums[i]))
-
-print(visited)
+print(solutions.intToRoman(1994))
 # solutions.reverse(1000000003)
 # print(solutions.fourSum([1,0,-1,0,-2,2], 0))
 # print(solutions.threeSum([0,0,0]))
