@@ -5,6 +5,7 @@
 
 # Return the maximum area of an island in grid. If there is no island, return 0.
 import math
+from math import floor
 
 from typing import List
 from typing import Optional
@@ -86,7 +87,7 @@ class Solution:
             if area % x == 0:
                 return [area // x, x]
 
-    def findTargetSumWays(nums: List[int], target: int) -> int:
+    def findTargetSumWays(self, nums: List[int], target: int) -> int:
         lookup = {}
 
         def backtrack(index, current_sum):
@@ -103,7 +104,7 @@ class Solution:
 
         return backtrack(0, 0)
 
-    def findTargetSumWays2(nums: List[int], target: int) -> int:
+    def findTargetSumWays2(self, nums: List[int], target: int) -> int:
         dp = [defaultdict(int) for _ in range(len(nums) + 1)]
 
         dp[0][0] = 1  # (0 only used 0 elements, current sum is 0 and there is one way to do it)
@@ -115,7 +116,7 @@ class Solution:
 
         return dp[len(nums)][target]
 
-    def findTargetSumWays3(nums: List[int], target: int) -> int:
+    def findTargetSumWays3(self, nums: List[int], target: int) -> int:
         dp = defaultdict(int)
 
         dp[0] = 1  # (0 only used 0 elements, current sum is 0 and there is one way to do it)
@@ -448,10 +449,141 @@ class Solution:
 
             # with the digit map it to the value we expect to append to the string
 
+    def letterCombinations(self, digits: str) -> List[str]:
+        if len(digits) == 0:
+            return []
+
+        num_possible_combinations = 1
+        i = 0
+        while i < len(digits):
+            # if it is a 7 or 9 we multiply by 4, else 3
+            if digits[i] == "7" or digits[i] == "9":
+                num_possible_combinations *= 4
+            else:
+                num_possible_combinations *= 3
+            i += 1
+
+        answer = ["" for p in range(num_possible_combinations)]
+        numpad = {"2": "abc", "3": "def",
+                  "4": "ghi", "5": "jkl", "6": "mno",
+                  "7": "pqrs", "8": "tuv", "9": "wxyz"}
+
+        i = 0
+        # Check each digit
+        while i < len(digits):
+            current_keys = numpad[digits[i]]
+            num_possible_combinations //= len(current_keys)
+            j = 0
+            while j < len(answer):
+                # Place the expected key in solution
+                for k in range(len(current_keys)):
+                    for x in range(num_possible_combinations):
+                        answer[j] += current_keys[k]
+                        j += 1
+            i += 1
+
+        return answer
+
+    def divide(self, dividend: int, divisor: int) -> int:
+        if divisor == 0:
+            return 2**31 - 1
+
+        if dividend == -2**31 and divisor == -1:
+            return 2**31 - 1
+
+        sign = 1
+        if dividend < 0:
+            dividend = -dividend
+            sign = -sign
+        if divisor < 0:
+            divisor = -divisor
+            sign = -sign
+
+        multiple = 1
+        while dividend >= (divisor << 1):
+            divisor <<= 1
+            multiple <<= 1
+
+        quotient = 0
+        while multiple > 0:
+            if dividend >= divisor:
+                dividend -= divisor
+                quotient += multiple
+            divisor >>= 1
+            multiple >>= 1
+
+        return sign * quotient
+
+    def stringMatching(self, words: List[str]) -> List[str]:
+        solution = []
+        word_string = " ".join(words)
+        for word in words:
+            # if the number of substrings is at least 2 we count it
+            # 2 because a word is a substring of itself
+            if word_string.count(word) >= 2:
+                solution.append(word)
+        return solution
+
+    def checkIfExist(self, arr: List[int]) -> bool:
+        lookup = defaultdict(list)
+        i = 0
+        for i in range(len(arr)):
+            lookup[arr[i]].append(i)
+
+        for i in range(len(arr)):
+            if (arr[i] * 2) in lookup:
+                for idx in lookup[arr[i]]:
+                    if idx != i:
+                        return True
+
+        return False
+
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+
+        def binarySearch(nums: List[int], target: int, l: int, r: int) -> int:
+            while l <= r:
+                mid = (r + l) // 2
+                if nums[mid] == target:
+                    return mid
+                elif nums[mid] < target:
+                    l = mid + 1
+                else:
+                    r = mid - 1
+
+            return -1
+
+        known_pos = binarySearch(nums, target, 0, len(nums) - 1)
+        start_idx = known_pos
+        end_idx = known_pos
+        # if the element exists in the array, keep binary searching sub arrays until final element is found
+        if start_idx != -1:
+            new_idx = 0
+            while new_idx != -1 and start_idx > 0:
+                # binary Search left subarray, keep going left until can't find element
+                new_idx = binarySearch(nums, target, 0, start_idx - 1)
+                if new_idx == start_idx:
+                    new_idx = -1
+                if new_idx != -1:
+                    start_idx = new_idx
+            new_idx = 0
+            while new_idx != -1 and end_idx < len(nums) - 1:
+                new_idx = binarySearch(nums, target, end_idx+1, len(nums) - 1)
+                # This means no more to find
+                if new_idx == end_idx:
+                    new_idx = -1
+                if new_idx != -1:
+                    end_idx = new_idx
+
+        ret = []
+        ret.append(start_idx)
+        ret.append(end_idx)
+        return ret
 
 
 solutions = Solution()
-print(solutions.intToRoman(1994))
+# (solutions.divide(7, -3))
+# print(solutions.checkIfExist([10, 3, 5, 2]))
+print(solutions.searchRange([5,7,7,8,8,10], 8))
 # solutions.reverse(1000000003)
 # print(solutions.fourSum([1,0,-1,0,-2,2], 0))
 # print(solutions.threeSum([0,0,0]))
