@@ -579,13 +579,38 @@ class Solution:
         ret.append(end_idx)
         return ret
 
+    def fizzbuzz(self, target):
+        for i in range(1, target + 1):
+            prompt = ""
+            if i % 3 == 0:
+                prompt += "fizz"
+            if i % 5 == 0:
+                prompt += "buzz"
+            if prompt == "":
+                prompt = i
+            print(prompt)
+
+    def findAllValidParenthesis(self, n:int) -> List[int]:
+        sol = []
+        count_open = count_close = 0
+        def dfs(ct_open, ct_close, current_string):
+            # this means we have built a full string with the total number of parenthesis' available
+            # validate and append to the list
+            if ct_open == ct_close and ct_open + ct_close == (n * 2):
+                sol.append(current_string)
+                return
+
+            if ct_open < n:
+                dfs(ct_open + 1, ct_close, current_string + "(")
+            # Can only add a closing parenthesis if the total number of opened ones are less than it
+            if ct_close < ct_open:
+                dfs(ct_open, ct_close + 1, current_string + ")")
+
+        dfs(count_open,count_close,"")
+        return sol
+
+
 
 solutions = Solution()
-# (solutions.divide(7, -3))
-# print(solutions.checkIfExist([10, 3, 5, 2]))
-print(solutions.searchRange([5,7,7,8,8,10], 8))
-# solutions.reverse(1000000003)
-# print(solutions.fourSum([1,0,-1,0,-2,2], 0))
-# print(solutions.threeSum([0,0,0]))
-# print(solutions.threeSumClosest([4,0,5,-5,3,3,0,-4,-5], -2))
-# print(solutions.convert("PAYPALISHIRING", 3))
+# solutions.fizzbuzz(100)
+print(solutions.findAllValidParenthesis(4))
