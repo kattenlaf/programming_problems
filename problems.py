@@ -590,6 +590,10 @@ class Solution:
                 prompt = i
             print(prompt)
 
+    def fizzbuzzTwo(self, target):
+        for i in range(1, 101):
+            print("Fizz" * (i%3 == 0) + (i%5 == 0) * "Buzz" or i)
+
     def findAllValidParenthesis(self, n:int) -> List[int]:
         sol = []
         count_open = count_close = 0
@@ -609,8 +613,85 @@ class Solution:
         dfs(count_open,count_close,"")
         return sol
 
+    def maxSubArray(self, nums: List[int]) -> int:
+        answer = nums[0]
+        current_sum = 0
+        i = 0
+        while i < len(nums):
+            # if it is the first number, we include in the subarray
+            # or if num[i] is > current sum plus num[i]
+            if i == 0 or nums[i] > current_sum + nums[i]:
+                # restart subarray basically
+                current_sum = nums[i]
+            else:
+                current_sum += nums[i]
+
+            answer = max(answer, current_sum)
+            i += 1
+
+        return solution
+
+    def maxSubArrayDivideAndConquer(self, nums: List[int]) -> int:
+        def maxSubArray(nums):
+            if len(nums) == 1:
+                return nums[0]
+
+            mid = len(nums) // 2
+            left_max = maxSubArray(nums[:mid])
+            right_max = maxSubArray(nums[mid:])
+
+            # Find the maximum sum subarray that crosses the middle element
+            left_sum = float('-inf')
+            sum = 0
+            for i in range(mid - 1, -1, -1):
+                sum += nums[i]
+                left_sum = max(left_sum, sum)
+
+            right_sum = float('-inf')
+            sum = 0
+            for i in range(mid, len(nums)):
+                sum += nums[i]
+                right_sum = max(right_sum, sum)
+
+            cross_max = left_sum + right_sum
+
+            return max(left_max, right_max, cross_max)
+
+        return maxSubArray(nums)
+
+    def maximumGap(self, nums: List[int]) -> int:
+        if len(nums) < 2:
+            return 0
+
+        minimum = min(nums)
+        maximum = max(nums)
+
+        bucket_size = max(1, (maximum - minimum) // (len(nums) - 1))
+        num_of_buckets = (maximum - minimum) // bucket_size + 1
+
+        # Initialize the buckets
+        buckets = [None] * num_of_buckets
+
+        # Put each element in its corresponding bucket
+        for num in nums:
+            bucket_index = (num - minimum) // bucket_size
+            if not buckets[bucket_index]:
+                buckets[bucket_index] = {'min': num, 'max': num}
+            else:
+                buckets[bucket_index]['min'] = min(buckets[bucket_index]['min'], num)
+                buckets[bucket_index]['max'] = max(buckets[bucket_index]['max'], num)
+
+        # Calculate the maximum gap between adjacent buckets
+        max_gap = 0
+        prev_max = minimum
+        for bucket in buckets:
+            if bucket:
+                max_gap = max(max_gap, bucket['min'] - prev_max)
+                prev_max = bucket['max']
+
+        return max_gap
 
 
 solutions = Solution()
-# solutions.fizzbuzz(100)
-print(solutions.findAllValidParenthesis(4))
+solutions.maximumGap([3, 6, 9, 1])
+# print(solutions.findAllValidParenthesis(4))
