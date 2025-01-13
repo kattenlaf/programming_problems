@@ -714,6 +714,67 @@ class Solution:
 
         return dummy.next
 
+    def minimumLength(self, s: str) -> int:
+        counter = defaultdict(int)
+        i = 0
+        length = 0
+        while i < len(s):
+            counter[s[i]] += 1
+            i += 1
+        for key in counter:
+            num_characters = counter[key]
+            if num_characters >= 3:
+                if num_characters % 2 == 0:
+                    length += 2
+                else:
+                    length += 1
+            else:
+                length += num_characters
+
+        return length
+
+    def makeGood(self, s: str) -> str:
+        i = 0
+        str_len = len(s)
+        stack = []
+        while i < str_len:
+            if stack and stack[-1] != s[i]:
+                # if it is a bad pair
+                if stack[-1] == s[i].lower() or stack[-1] == s[i].upper():
+                    stack.pop()
+                    first_half = s[:i-1]
+                    second_half = s[i+1:] if (i + 1) < str_len else ""
+                    s = first_half + second_half
+                    i -= 2
+                    str_len -= 2
+                else:
+                    stack.append(s[i])
+            else:
+                stack.append(s[i])
+            i += 1
+        return s
+
+    def canConstruct(self, ransomNote: str, magazine: str):
+        # optimize
+        if len(ransomNote) > len(magazine):
+            return False
+
+        mag_char_count = defaultdict(int)
+        i = 0
+        while i < len(magazine):
+            mag_char_count[magazine[i]] += 1
+            i += 1
+
+        i = 0
+        while i < len(ransomNote):
+            if mag_char_count[ransomNote[i]] == 0:
+                return False
+            else:
+                mag_char_count[ransomNote[i]] -= 1
+            i += 1
+        return True
+
+
 def buildList(nums):
     dummy = ListNode()
     current = dummy
@@ -729,9 +790,11 @@ def printList(list: Optional[ListNode]):
         current = current.next
 
 solutions = Solution()
-list_test = [1, 5, 3]
-most = max(list_test)
-print(most)
+test = defaultdict(list)
+
+# print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
+print(solutions.canConstruct("aa", "aab"))
+
 """
 list1 = buildList([1,4,5])
 list2 = buildList([1,3,4])
