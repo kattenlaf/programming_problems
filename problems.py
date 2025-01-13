@@ -1,17 +1,22 @@
-#You are given an m x n binary matrix grid. An island is a group of 1('s (representing land) connected 4-directionally (horizontal or vertical.) '
-#'You may assume all four edges of the grid are surrounded by water.)
-
-# The area of an island is the number of cells with a value 1 in the island.
-
-# Return the maximum area of an island in grid. If there is no island, return 0.
 import math
-from math import floor
-
 from typing import List
 from typing import Optional
 from collections import defaultdict, deque
+import heapq
 
-def solution(arr):
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+"""
+You are given an m x n binary matrix grid. An island is a group of 1('s (representing land) connected 4-directionally (horizontal or vertical.) '
+You may assume all four edges of the grid are surrounded by water.)
+The area of an island is the number of cells with a value 1 on the island.
+Return the maximum area of an island in grid. If there is no island, return 0. 
+"""
+def solution_exploreIslands(arr):
     i,j = 0, 0
     islands = set()
 
@@ -340,8 +345,6 @@ class Solution:
         return False
 
     def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
-        print(visited)
-
         sol = []
         nums.sort()
 
@@ -629,7 +632,7 @@ class Solution:
             answer = max(answer, current_sum)
             i += 1
 
-        return solution
+        return answer
 
     def maxSubArrayDivideAndConquer(self, nums: List[int]) -> int:
         def maxSubArray(nums):
@@ -659,39 +662,81 @@ class Solution:
 
         return maxSubArray(nums)
 
-    def maximumGap(self, nums: List[int]) -> int:
-        if len(nums) < 2:
-            return 0
+    def mergeKLists(self, lists: List[Optional[ListNode]]) -> Optional[ListNode]:
+        if len(lists) == 0:
+            return None
 
-        minimum = min(nums)
-        maximum = max(nums)
+        while len(lists) > 1:
+            mergedLists = []
+            # Merge each list in pairs
+            for i in range(0, len(lists), 2):
+                list1 = lists[i]
+                list2 = lists[i+1] if (i+1) < len(lists) else None
+                mergedList = self.mergeLinkedLists(list1, list2)
+                mergedLists.append(mergedList)
+            lists = mergedLists
 
-        bucket_size = max(1, (maximum - minimum) // (len(nums) - 1))
-        num_of_buckets = (maximum - minimum) // bucket_size + 1
+        return lists[0]
 
-        # Initialize the buckets
-        buckets = [None] * num_of_buckets
-
-        # Put each element in its corresponding bucket
-        for num in nums:
-            bucket_index = (num - minimum) // bucket_size
-            if not buckets[bucket_index]:
-                buckets[bucket_index] = {'min': num, 'max': num}
+    def mergeLinkedLists(self, list1, list2):
+        dummy_node = ListNode()
+        current_node = dummy_node
+        while list1 and list2:
+            if list1.val < list2.val:
+                current_node.next = list1
+                list1 = list1.next
             else:
-                buckets[bucket_index]['min'] = min(buckets[bucket_index]['min'], num)
-                buckets[bucket_index]['max'] = max(buckets[bucket_index]['max'], num)
+                current_node.next = list2
+                list2 = list2.next
+            current_node = current_node.next
 
-        # Calculate the maximum gap between adjacent buckets
-        max_gap = 0
-        prev_max = minimum
-        for bucket in buckets:
-            if bucket:
-                max_gap = max(max_gap, bucket['min'] - prev_max)
-                prev_max = bucket['max']
+        if list1:
+            current_node.next = list1
+        if list2:
+            current_node.next = list2
 
-        return max_gap
+        return dummy_node.next
 
+    def mergeKListsHeap(self, lists: Optional[ListNode]) -> Optional[ListNode]:
+        minHeap = []
+        for i, node in enumerate(lists):
+            if node is not None:
+                heapq.heappush(minHeap, (node.val, i, node))
+
+        dummy = current = ListNode()
+        while minHeap:
+            # Pop the smallest item off the heap
+            val, i, node = heapq.heappop(minHeap)
+            current.next = node
+            current = current.next
+            if node.next is not None:
+                heapq.heappush(minHeap, (node.next.val, i, node.next))
+
+        return dummy.next
+
+def buildList(nums):
+    dummy = ListNode()
+    current = dummy
+    for num in nums:
+        current.next = ListNode(num)
+        current = current.next
+    return dummy.next
+
+def printList(list: Optional[ListNode]):
+    current = list
+    while current:
+        print(current.val, end="->") if current.next is not None else print(current.val, end="")
+        current = current.next
 
 solutions = Solution()
-solutions.maximumGap([3, 6, 9, 1])
-# print(solutions.findAllValidParenthesis(4))
+list_test = [1, 5, 3]
+most = max(list_test)
+print(most)
+"""
+list1 = buildList([1,4,5])
+list2 = buildList([1,3,4])
+list3 = buildList([2,6])
+merged = solutions.mergeKListsHeap([list1, list2, list3])
+printList(merged)
+"""
+
