@@ -813,6 +813,30 @@ class Solution:
 
         return current_max / k
 
+    def findKthLargest(self, nums: List[int], k: int) -> int:
+        maxHeap = []
+        for num in nums:
+            heapq.heappush(maxHeap, -num)
+
+        answer = 0
+        for i in range(k):
+            answer = heapq.heappop(maxHeap)
+
+        return -answer
+
+    def thirdMax(self, nums: List[int]) -> int:
+        maximums = [float('-inf') for i in range(3)]
+        maximums[0] = nums[0]
+        for i in range(len(nums)):
+            if nums[i] > maximums[0]:
+                maximums[0], maximums[1], maximums[2] = nums[i], maximums[0], maximums[1]
+            elif nums[i] < maximums[0]:
+                if maximums[1] == "" or nums[i] > maximums[1]:
+                    maximums[1], maximums[2] = nums[i], maximums[1]
+                elif nums[i] < maximums[1]:
+                    if maximums[2] == "" or nums[i] > maximums[2]:
+                        maximums[2] = nums[i]
+        return maximums[2] if maximums[2] != "" else maximums[0]
 
 def buildList(nums):
     dummy = ListNode()
@@ -833,7 +857,9 @@ test = defaultdict(list)
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
-print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
+# print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
+# print(solutions.findKthLargest([3,2,1,5,6,4], 2))
+print(solutions.thirdMax([5,2,2]))
 
 """
 list1 = buildList([1,4,5])
