@@ -774,6 +774,45 @@ class Solution:
             i += 1
         return True
 
+    def reverseVowels(self, s: str) -> str:
+        reversed_string = ["" for i in range(len(s))]
+        for i in range(len(s)):
+            reversed_string[i] = s[i]
+
+        l, r = 0, len(s) - 1
+        vowels = set(["a", "e", "i", "o", "u"])
+        while l < r:
+            if reversed_string[l].lower() in vowels:
+                # iterate r to the first vowel while also staying > l
+                while r > l:
+                    if reversed_string[r].lower() in vowels:
+                        # do the swap
+                        reversed_string[l], reversed_string[r] = reversed_string[r], reversed_string[l]
+                        l += 1
+                        r -= 1
+                        break
+                    else:
+                        r -= 1
+            else:
+                l += 1
+        return "".join(reversed_string)
+
+    def findMaxAverage(self, nums: List[int], k: int) -> float:
+        i = j = 0
+        current_max = 0
+        for j in range(k):
+            current_max += nums[j]
+        j = k
+        i += 1
+        current_sum = current_max
+        while j < len(nums):
+            current_sum = current_sum - nums[i-1] + nums[j]
+            current_max = max(current_max, current_sum)
+            j += 1
+            i += 1
+
+        return current_max / k
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -793,7 +832,8 @@ solutions = Solution()
 test = defaultdict(list)
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
-print(solutions.canConstruct("aa", "aab"))
+# print(solutions.canConstruct("aa", "aab"))
+print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
 
 """
 list1 = buildList([1,4,5])
