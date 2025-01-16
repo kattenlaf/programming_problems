@@ -880,6 +880,31 @@ class Solution:
 
         return l
 
+    def is_pangram(self, st):
+        solution = [False for i in range(26)]
+        for i in range(len(st)):
+            position = ord(st[i].lower()) - ord("a")
+            if position >= 0 and position < 26:
+                solution[position] = True
+        for i in range(len(solution)):
+            if solution[i] == False:
+                return False
+        return True
+
+    def productExceptSelf(self, nums: List[int]) -> List[int]:
+        solution = [1] * len(nums)
+        left = 1
+        # iterate upwards, storing the product of the entire array on left side of nums[i] in solution [i] position
+        for i in range(len(nums)):
+            solution[i] = left
+            left *= nums[i]
+        right = 1
+        for i in range(len(nums) - 1, -1, -1):
+            solution[i] *= right
+            right *= nums[i]
+        return solution
+
+
 def buildList(nums):
     dummy = ListNode()
     current = dummy
@@ -901,7 +926,10 @@ test = defaultdict(list)
 # print(solutions.canConstruct("aa", "aab"))
 # print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
 # print(solutions.findKthLargest([3,2,1,5,6,4], 2))
-print(solutions.findPeakElement([1,2,1,3,5,6,4]))
+# (solutions.findPeakElement([1,2,1,3,5,6,4]))
+test_num = 0
+test_num ^= 2
+print(test_num)
 
 """
 list1 = buildList([1,4,5])
