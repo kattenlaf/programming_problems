@@ -904,6 +904,27 @@ class Solution:
             right *= nums[i]
         return solution
 
+    def nextPermutation(self, nums: List[int]) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        i = len(nums) - 2
+        while i >= 0 and nums[i] >= nums[i + 1]:
+            # Find the position in the array where nums[i] > nums[i+1] if it exists
+            i -= 1
+
+        # i will be -1 if there is no permutation after this current list and we will just reverse the list at the end
+        if i >= 0:
+            j = len(nums) - 1
+
+            # find the number to swap position i with, which will be the next greatest number in the list, nums[i] will
+            # take nums[j] place to uphold the rule of lexicographical order
+            while j >= 0 and nums[j] <= nums[i]:
+                j -= 1
+            nums[i], nums[j] = nums[j], nums[i]
+
+        nums[i + 1:] = reversed(nums[i + 1:])
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -927,9 +948,7 @@ test = defaultdict(list)
 # print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
 # print(solutions.findKthLargest([3,2,1,5,6,4], 2))
 # (solutions.findPeakElement([1,2,1,3,5,6,4]))
-test_num = 0
-test_num ^= 2
-print(test_num)
+solutions.nextPermutation([1, 3, 2])
 
 """
 list1 = buildList([1,4,5])
