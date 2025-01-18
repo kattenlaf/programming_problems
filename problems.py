@@ -925,6 +925,27 @@ class Solution:
 
         nums[i + 1:] = reversed(nums[i + 1:])
 
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        heap = []
+        counter = defaultdict(int)
+        # increment count, of each element
+        for n in nums:
+            counter[n] += 1
+
+        # to know the top k elements, put the count of each element on a max heap
+        for key, count in counter.items():
+            heapq.heappush(heap, (-count, key))
+
+        solution = []
+        # pop off k elements to know the top k elements
+        for i in range(k):
+            elem = heapq.heappop(heap)
+            solution.append(elem[1])
+
+        return solution
+
+
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -948,7 +969,7 @@ test = defaultdict(list)
 # print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
 # print(solutions.findKthLargest([3,2,1,5,6,4], 2))
 # (solutions.findPeakElement([1,2,1,3,5,6,4]))
-solutions.nextPermutation([1, 3, 2])
+print(solutions.topKFrequent([1,1,1,2,2,3], 2))
 
 """
 list1 = buildList([1,4,5])
