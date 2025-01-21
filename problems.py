@@ -1012,6 +1012,59 @@ class Solution:
 
         return answer
 
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+        # do a multi source bfs, do the following:
+        # first start with all rotten oranges in the queue
+        # then from each cell/node check the surrounding cells if they are fresh oranges
+        # if fresh, set it to rotten and then append to new queue
+        # ignore cell if it is already rotten or 0
+        # increment minutes when queue is empty, update queue to have the new rotten oranges
+        # and then continue, stop iterating when queue is empty
+        # do final check of grid for any still fresh oranges,
+        # if any is fresh return -1
+        minutes = 0
+        rotten = []
+        fresh = set()
+        # row
+        for r in range(len(grid)):
+            # col
+            for c in range(len(grid[r])):
+                if grid[r][c] == 2:
+                    # tuple representing coordinate of rotten orange
+                    rotten.append((r, c))
+                if grid[r][c] == 1:
+                    fresh.add((r, c))
+
+        new_rotten = []
+
+        def bfs(r, c, new_rotten):
+            # if outside the grid return
+            if r < 0 or r >= len(grid) or c < 0 or c >= len(grid[r]):
+                return
+
+            if grid[r][c] == 1:
+                grid[r][c] = 2
+                fresh.remove((r, c))
+                new_rotten.append((r, c))
+
+        while rotten or new_rotten:
+            node = rotten.pop()
+            r, c = node[0], node[1]
+            bfs(r - 1, c, new_rotten)
+            bfs(r + 1, c, new_rotten)
+            bfs(r, c - 1, new_rotten)
+            bfs(r, c + 1, new_rotten)
+
+            if len(rotten) == 0 and len(new_rotten) != 0:
+                minutes += 1
+                rotten = new_rotten
+                new_rotten = []
+
+        if len(fresh) > 0:
+            return -1
+        else:
+            return minutes
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -1028,7 +1081,7 @@ def printList(list: Optional[ListNode]):
         current = current.next
 
 solutions = Solution()
-test = defaultdict(list)
+print(solutions.orangesRotting([[2,1,1],[1,1,0],[0,1,1]]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
