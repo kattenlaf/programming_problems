@@ -944,7 +944,73 @@ class Solution:
 
         return solution
 
+    def search(self, nums: List[int], target: int) -> int:
+        l, r = 0, len(nums) - 1
+        while l <= r:
+            mid = (r + l) // 2
+            if nums[mid] == target:
+                return mid
+            # if the middle number is > but nums[l] is also greater we want to binary search the right
+            elif nums[mid] >= nums[l]:
+                if nums[l] <= target <= nums[mid]:
+                    r = mid - 1
+                else:
+                    l = mid + 1
+            else:
+                if nums[mid] <= target <= nums[r]:
+                    l = mid + 1
+                else:
+                    r = mid - 1
 
+
+        return -1
+
+    def isValidSudoku(self, board: List[List[str]]) -> bool:
+        rows = defaultdict(set)
+        cols = defaultdict(set)
+        sub_boxes = defaultdict(set)
+
+        # iterate over entire board,
+
+        for row in range(9):
+            for col in range(9):
+                if board[row][col] == ".":
+                    continue
+                sb_r = row // 3
+                sb_c = col // 3
+                if board[row][col] in rows[row] or board[row][col] in cols[col] or board[row][col] in sub_boxes[
+                    (sb_r, sb_c)]:
+                    return False
+                else:
+                    rows[row].add(board[row][col])
+                    cols[col].add(board[row][col])
+                    sub_boxes[(sb_r, sb_c)].add(board[row][col])
+
+        return True
+
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        candidates = sorted(candidates)
+        answer = []
+        def appendSolution(index, possible_candidates, remaining_target):
+            if remaining_target == 0:
+                answer.append(possible_candidates.copy())
+                return
+            if remaining_target < 0 or index == len(candidates):
+                return
+
+            # do dfs with current index
+            possible_candidates(candidates[index])
+            appendSolution(index + 1, possible_candidates, remaining_target - candidates[index])
+            possible_candidates.pop()
+
+            # skip the current candidate and any indexes that have the same value
+            while (index+1) < len(candidates) and candidates[index] == candidates[index+1]:
+                index += 1
+            appendSolution(index+1, possible_candidates, remaining_target - candidates[index])
+
+        appendSolution(0, [], target)
+
+        return answer
 
 
 def buildList(nums):
@@ -969,7 +1035,7 @@ test = defaultdict(list)
 # print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
 # print(solutions.findKthLargest([3,2,1,5,6,4], 2))
 # (solutions.findPeakElement([1,2,1,3,5,6,4]))
-print(solutions.topKFrequent([1,1,1,2,2,3], 2))
+# print(solutions.search([5,1,2,3,4], 1))
 
 """
 list1 = buildList([1,4,5])
