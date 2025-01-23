@@ -1065,6 +1065,41 @@ class Solution:
         else:
             return minutes
 
+    def multiply(self, num1: str, num2: str) -> str:
+        if num1 == "0" or num2 == "0":
+            return "0"
+
+        def convertToInt(num):
+            places = len(num) - 1
+            i = 0
+            digit = 0
+            result = 0
+            while i < len(num):
+                digit = ord(num[i]) - ord("0")
+                result += digit * (10 ** places)
+                places -= 1
+                i += 1
+
+            return result
+
+        intNum1 = convertToInt(num1)
+        intNum2 = convertToInt(num2)
+        solution = intNum1 * intNum2
+        return str(solution)
+
+    def jump(self, nums: List[int]) -> int:
+        start = end = num_jumps = 0
+        while end < len(nums) - 1:
+            farest = 0
+            for i in range(start, end + 1):
+                farest = max(farest, i + nums[i])
+
+            start = end + 1
+            end = farest
+            num_jumps += 1
+
+        return num_jumps
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -1081,7 +1116,8 @@ def printList(list: Optional[ListNode]):
         current = current.next
 
 solutions = Solution()
-print(solutions.orangesRotting([[2,1,1],[1,1,0],[0,1,1]]))
+# print(solutions.orangesRotting([[2,1,1],[1,1,0],[0,1,1]]))
+print(solutions.jump([2,3,1,1,4]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
