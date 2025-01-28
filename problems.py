@@ -1100,6 +1100,52 @@ class Solution:
 
         return num_jumps
 
+    def rotate(self, nums: List[int], k: int) -> None:
+        """
+        Do not return anything, modify nums in-place instead.
+        """
+        solution = [0] * len(nums)
+        for i in range(len(nums)):
+            pos = (i + k) % len(nums)
+            solution[pos] = nums[i]
+
+        return solution
+
+    def findMaxFish(self, grid: List[List[int]]) -> int:
+        max_fish = 0
+        visited = set()
+
+        def dfs(row, col, current_sum):
+            if grid[row][col] == 0:
+                return 0
+
+            # add node to visited, then add value to current_sum
+            # dfs top, bottom, left, right
+            visited.add((row, col))
+            current_sum += grid[row][col]
+            if row > 0:
+                if (row - 1, col) not in visited:
+                    current_sum = max(current_sum, dfs(row - 1, col, current_sum))
+            if row < len(grid) - 1:
+                if (row + 1, col) not in visited:
+                    current_sum = max(current_sum, dfs(row + 1, col, current_sum))
+            if col > 0:
+                if (row, col - 1) not in visited:
+                    current_sum = max(current_sum, dfs(row, col - 1, current_sum))
+            if col < len(grid[row]) - 1:
+                if (row, col + 1) not in visited:
+                    current_sum = max(current_sum, dfs(row, col + 1, current_sum))
+
+            return current_sum
+
+        # need to do a dfs on each node
+        for r in range(len(grid)):
+            for c in range(len(grid[r])):
+                if grid[r][c] != 0 and grid[r][c] not in visited:
+                    max_fish = max(max_fish, dfs(r, c, 0))
+
+        return max_fish
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -1117,7 +1163,10 @@ def printList(list: Optional[ListNode]):
 
 solutions = Solution()
 # print(solutions.orangesRotting([[2,1,1],[1,1,0],[0,1,1]]))
-print(solutions.jump([2,3,1,1,4]))
+#print(solutions.jump([2,3,1,1,4]))
+# solutions.rotate([1,2,3,4,5,6,7], 3)
+
+print(solutions.findMaxFish([[0,2,1,0],[4,0,0,3],[1,0,0,4],[0,3,2,0]]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
