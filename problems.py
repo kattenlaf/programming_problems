@@ -1146,6 +1146,62 @@ class Solution:
 
         return max_fish
 
+    # https://leetcode.com/discuss/interview-question/6038441/Google-or-L4-or-Phonescreen
+    def findUniquePaths(self, grid: List[List[int]]) -> int:
+        solution = 0
+        gridlen = len(grid)
+        dp = [[0] * len(grid[0]) for i in range(gridlen)]
+        queue = deque([])
+        dp[gridlen - 1][0] = 1 # base case, 1 way to get to bottom left since it is the start
+        queue.appendleft((gridlen - 1, 0))
+
+        def checkBounds(coord, grid_) -> bool:
+            row = coord[0]
+            col = coord[1]
+            if 0 <= row < len(grid) and 0 <= col < len(grid[0]):
+                return True
+            return False
+
+        def checkAndAdd(coord, grid_, dp_) -> int:
+            result = 0
+            row = coord[0]
+            col = coord[1]
+            top_left = [row-1, col-1]
+            left = [row, col-1]
+            bottom_left = [row+1, col-1]
+            if 0 <= top_left[0] < len(grid) and 0 <= top_left[1] < len(grid[0]):
+                result += dp_[top_left[0]][top_left[1]]
+            if 0 <= left[0] < len(grid) and 0 <= left[1] < len(grid[0]):
+                result += dp_[left[0]][left[1]]
+            if 0 <= bottom_left[0] < len(grid) and 0 <= bottom_left[1] < len(grid[0]):
+                result += dp_[bottom_left[0]][bottom_left[1]]
+
+            return result
+
+        while queue:
+            pos = queue.pop()
+            # pop node position, add top right, right, bottom right position where applicable
+            top_right = [pos[0] - 1, pos[1] + 1]
+            right = [pos[0], pos[1] + 1]
+            bottom_right = [pos[0] + 1, pos[1] + 1]
+            if checkBounds(top_right, grid):
+                # update dp table and insert new position into queue
+                # summation of unique ways to get to top left, left, bottom left adjacent to this node
+                dp[top_right[0]][top_right[1]] = checkAndAdd(top_right, grid, dp)
+                queue.appendleft((top_right[0], top_right[1]))
+
+            if checkBounds(right, grid):
+                dp[right[0]][right[1]] = checkAndAdd(right, grid, dp)
+                queue.appendleft((right[0], right[1]))
+
+            if checkBounds(bottom_right, grid):
+                dp[bottom_right[0]][bottom_right[1]] = checkAndAdd(bottom_right, grid, dp)
+                queue.appendleft((bottom_right[0], bottom_right[1]))
+
+        return dp[len(grid) - 1][len(grid[0]) - 1]
+
+
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -1166,7 +1222,13 @@ solutions = Solution()
 #print(solutions.jump([2,3,1,1,4]))
 # solutions.rotate([1,2,3,4,5,6,7], 3)
 
-print(solutions.findMaxFish([[0,2,1,0],[4,0,0,3],[1,0,0,4],[0,3,2,0]]))
+# print(solutions.findMaxFish([[0,2,1,0],[4,0,0,3],[1,0,0,4],[0,3,2,0]]))
+print(solutions.findUniquePaths([
+                                  [0, 0, 0, 0],
+                                  [0, 0, 0, 0],
+                                  [0, 0, 0, 0],
+                                  [0, 0, 0, 0]
+                                ]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
