@@ -1223,6 +1223,46 @@ class Solution:
 
         return dfs(1, len(nums) - 2)
 
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        solution = []
+        if (len(nums) == 1):
+            return [nums.copy()]
+
+        for i in range(len(nums)):
+            num = nums.pop(0)
+            permutations = self.permute(nums)
+            for perm in permutations:
+                perm.append(num)
+            solution.extend(permutations)
+            nums.append(num)
+
+        return solution
+
+    def permuteUnique(self, nums: List[int]) -> List[List[int]]:
+        solution = []
+        perm = []
+        count = {n:0 for n in nums}
+        for num in nums:
+            count[num] += 1
+
+        # for each num we want to keep track of how many remain in the list
+        def dfs():
+            # base case
+            if len(perm) == len(nums):
+                solution.append(perm.copy())
+
+            # iterate using a dictionary for each individual number so we know we won't end up in a scenario where
+            # we iterate over the number again later creating a duplicate permutation
+            for val in count:
+                if count[val] > 0:
+                    perm.append(val)
+                    count[val] -= 1
+                    dfs()
+                    count[val] += 1
+                    perm.pop()
+        dfs()
+        return solution
+
 
 
 
@@ -1253,7 +1293,9 @@ solutions = Solution()
 #                                  [0, 0, 0, 0]
 #                                ]))
 
-print(solutions.maxCoins([3,1,5,8]))
+# print(solutions.maxCoins([3,1,5,8]))
+print(solutions.permute([1,2,2]))
+print(solutions.permuteUnique([1, 2, 2]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
