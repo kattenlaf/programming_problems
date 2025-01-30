@@ -1263,7 +1263,43 @@ class Solution:
         dfs()
         return solution
 
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        solution_groups = defaultdict(list)
+        for string in strs:
+            # create a character map for ascii calculation
+            num_chars = [0] * 26
+            for char in string:
+                pos = ord(char) - ord('a')
+                num_chars[pos] += 1
+            key = tuple(num_chars)
+            solution_groups[key].append(string)
 
+        solution = []
+        for group in solution_groups.values():
+            solution.append(group)
+
+        return solution
+
+    def myPow(self, x: float, n: int) -> float:
+        def calculate(x, n):
+            if x == 0:
+                return 0
+            if n == 0:
+                return 1
+
+            sol = calculate(x, n // 2)
+            sol = sol * sol
+
+            if n % 2 == 1:
+                return sol * x
+
+            return sol
+
+        val = calculate(x, abs(n))
+        if n < 0:
+            return 1 / val
+
+        return val
 
 
 def buildList(nums):
@@ -1294,8 +1330,7 @@ solutions = Solution()
 #                                ]))
 
 # print(solutions.maxCoins([3,1,5,8]))
-print(solutions.permute([1,2,2]))
-print(solutions.permuteUnique([1, 2, 2]))
+print(solutions.groupAnagrams(["eat","tea","tan","ate","nat","bat"]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
