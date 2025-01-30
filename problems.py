@@ -1201,6 +1201,29 @@ class Solution:
         return dp[len(grid) - 1][len(grid[0]) - 1]
 
 
+    # https://leetcode.com/problems/burst-balloons/description/
+    # https://www.youtube.com/watch?v=VFskby7lUbw&ab_channel=NeetCode
+    def maxCoins(self, nums: List[int]) -> int:
+        nums = [1] + nums + [1]
+        dp  = {}
+
+        def dfs(l, r):
+            if l > r:
+                return 0
+            if (l, r) in dp:
+                return dp[l, r]
+
+            # compute the value to be stored in dp
+            dp[(l,r)] = 0
+            for i in range(l, r+1):
+                coins = nums[l-1] * nums[i] * nums[r+1]
+                coins += dfs(l, i-1) + dfs(i+1, r)
+                dp[(l, r)] = max(dp[(l, r)], coins)
+            return dp[(l, r)]
+
+        return dfs(1, len(nums) - 2)
+
+
 
 
 def buildList(nums):
@@ -1223,12 +1246,14 @@ solutions = Solution()
 # solutions.rotate([1,2,3,4,5,6,7], 3)
 
 # print(solutions.findMaxFish([[0,2,1,0],[4,0,0,3],[1,0,0,4],[0,3,2,0]]))
-print(solutions.findUniquePaths([
-                                  [0, 0, 0, 0],
-                                  [0, 0, 0, 0],
-                                  [0, 0, 0, 0],
-                                  [0, 0, 0, 0]
-                                ]))
+#print(solutions.findUniquePaths([
+#                                  [0, 0, 0, 0],
+#                                  [0, 0, 0, 0],
+#                                  [0, 0, 0, 0],
+#                                  [0, 0, 0, 0]
+#                                ]))
+
+print(solutions.maxCoins([3,1,5,8]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
