@@ -1301,6 +1301,101 @@ class Solution:
 
         return val
 
+    def spiralOrder(self, matrix: List[List[int]]) -> List[int]:
+        # representation of right, down, left, up
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        cur_direction = 0
+        solution = []
+        # traversing will be false when we are at the final possible node
+        traversing = True
+        r, c = 0, 0
+        visited = set()
+
+        def shouldChangeDirection(r, c):
+            if (r, c) in visited:
+                return False
+            if r < 0 or r > (len(matrix) - 1):
+                return False
+            if c < 0 or c > (len(matrix[r]) - 1):
+                return False
+            return True
+
+        while traversing:
+            solution.append(matrix[r][c])
+            visited.add((r, c))
+            # append the node to solution list and then determine what should occur next
+            changedir = False
+            for i in range(4):
+                cur_direction = (cur_direction + i) % len(directions)
+                new_r = r + directions[cur_direction][0]
+                new_c = c + directions[cur_direction][1]
+                changedir = shouldChangeDirection(new_r, new_c)
+                if changedir:
+                    r, c = new_r, new_c
+                    break
+            if not changedir:
+                traversing = False
+
+        return solution
+
+    def spiralOrderOptimal(self, matrix: List[List[int]]) -> List[int]:
+        top, bottom = 0, len(matrix) - 1
+        left, right = 0, len(matrix[top]) - 1
+        solution = []
+        while top <= bottom and left <= right:
+            # store values going to right
+            for i in range(left, right + 1):
+                solution.append(matrix[top][i])
+            top += 1
+
+            # store values going down on right side
+            for i in range(top, bottom + 1):
+                solution.append(matrix[i][right])
+            right -= 1
+
+            if top <= bottom:
+                # Bottom row
+                for i in range(right, left - 1, -1):
+                    solution.append(matrix[bottom][i])
+                bottom -= 1
+
+            if left <= right:
+                # Left column
+                for i in range(bottom, top - 1, -1):
+                    solution.append(matrix[i][left])
+                left += 1
+
+        return solution
+
+    def canJump(self, nums: List[int]) -> bool:
+        n = len(nums)
+        if n <= 1:
+            return True
+        goal = n - 1
+        for i in range(n - 2, -1, -1):
+            if nums[i] >= goal - i:
+                goal = i
+
+        return goal == 0
+
+    def merge(self, intervals: List[List[int]]) -> List[List[int]]:
+        # sort the array by the first value in the intervals
+        solution = []
+        intervals = sorted(intervals, key=lambda start: start[0])
+
+        prev = intervals[0]
+        i = 1
+        while i <= len(intervals):
+            current = intervals[i] if i < len(intervals) else []
+            if i < len(intervals) and current[0] <= prev[1]:
+                prev[1] = max(current[1], prev[1])
+            else:
+                solution.append(prev)
+                prev = current
+            i += 1
+
+        return solution
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -1330,7 +1425,8 @@ solutions = Solution()
 #                                ]))
 
 # print(solutions.maxCoins([3,1,5,8]))
-print(solutions.groupAnagrams(["eat","tea","tan","ate","nat","bat"]))
+# print(solutions.groupAnagrams(["eat","tea","tan","ate","nat","bat"]))
+print(solutions.spiralOrderOptimal([[1,2,3],[4,5,6],[7,8,9]]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
