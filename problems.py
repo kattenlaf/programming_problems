@@ -1412,6 +1412,59 @@ class Solution:
 
         return res
 
+    def insert(self, intervals: List[List[int]], newInterval: List[int]) -> List[List[int]]:
+        solution = []
+        for i in range(len(intervals)):
+            currentInterval = intervals[i]
+            # if we find where the interval should be placed, just insert it and then return
+            if newInterval[1] < currentInterval[0]:
+                solution.append(newInterval)
+                return solution + intervals[i:]
+            elif newInterval[0] > currentInterval[1]:
+                solution.append(currentInterval)
+            else:
+                # this means there is an overlap
+                newInterval[0] = min(newInterval[0], currentInterval[0])
+                newInterval[1] = max(newInterval[1], currentInterval[1])
+
+        # if we get here that means new interval was never added so append it here and then return
+        solution.append(newInterval)
+        return solution
+
+    def generateMatrix(self, n: int) -> List[List[int]]:
+        matrix = [[0 for _ in range(n)] for _ in range(n)]
+        directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+        cur_direction = 0
+        r, c = 0, 0
+        visited = set()
+
+        def shouldChangeDirection(r, c):
+            if (r, c) in visited:
+                return False
+            if r < 0 or r > (len(matrix) - 1):
+                return False
+            if c < 0 or c > (len(matrix[r]) - 1):
+                return False
+            return True
+
+        for i in range(1, (n * n) + 1):
+            matrix[r][c] = i
+            visited.add((r, c))
+            for j in range(4):
+                cur_direction = (cur_direction + j) % len(directions)
+                new_r = r + directions[cur_direction][0]
+                new_c = c + directions[cur_direction][1]
+                changedir = shouldChangeDirection(new_r, new_c)
+                if changedir:
+                    r, c = new_r, new_c
+                    break
+
+        return matrix
+
+
+
+
+
 
 def buildList(nums):
     dummy = ListNode()
@@ -1442,7 +1495,10 @@ solutions = Solution()
 
 # print(solutions.maxCoins([3,1,5,8]))
 # print(solutions.groupAnagrams(["eat","tea","tan","ate","nat","bat"]))
-print(solutions.spiralOrderOptimal([[1,2,3],[4,5,6],[7,8,9]]))
+# print(solutions.spiralOrderOptimal([[1,2,3],[4,5,6],[7,8,9]]))
+
+# print(solutions.insert([[1,3],[6,9]], [2, 5]))
+print(solutions.generateMatrix(3))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
