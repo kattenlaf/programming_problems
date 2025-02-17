@@ -1461,9 +1461,102 @@ class Solution:
 
         return matrix
 
+    def pivotIndex(self, nums: List[int]) -> int:
+        left_sum = 0
+        right_sum = sum(nums)
+        i = 0
+        while i < len(nums):
+            right_sum -= nums[i]
+            if left_sum == right_sum:
+                return i
+            left_sum += nums[i]
+            i += 1
 
+        return -1
 
+    def compress(self, chars: List[str]) -> int:
+        l = 0
+        count = 0
+        while l < len(chars):
+            count += 1
+            r = l + 1
+            while r < len(chars) and chars[r] == chars[l]:
+                # pop the character at that index and increment the count
+                chars.pop(r)
+                count += 1
 
+            # insert the count
+            if count != 1:
+                count = str(count)
+                for c in count:
+                    chars.insert(r, c)
+                    r += 1
+
+            count = 0
+            l = r
+
+        return len(chars)
+
+    def numTilePossibilities(self, tiles: str) -> int:
+        counts = [0] * 26
+        fac = [1] * (len(tiles) + 1)
+        for i in range(1, len(tiles) + 1):
+            fac[i] = i * fac[i - 1]
+        for c in tiles:
+            counts[ord(c) - ord('A')] += 1
+        lengthcounts = [0] * (len(tiles) + 1)
+        lengthcounts[0] = 1
+        for i in range(26):
+            if counts[i] > 0:
+                temp = [0] * (len(tiles) + 1)
+                for j in range(len(tiles) + 1):
+                    if lengthcounts[j] > 0:
+                        for k in range(1, counts[i] + 1):
+                            totallength = j + k
+                            temp[totallength] += lengthcounts[j] * fac[totallength] // (fac[k] * fac[j])
+                for j in range(len(tiles) + 1):
+                    lengthcounts[j] += temp[j]
+        return sum(lengthcounts[1:])
+
+    def uniquePaths(self, m: int, n: int) -> int:
+        # initialize a dp table
+        dp = [[0] * n for _ in range(m)]
+
+        for r in range(m):
+            dp[r][n - 1] = 1
+        for c in range(n):
+            dp[m - 1][c] = 1
+
+        # fill dp table with summations of ways to get to bottom right corner
+        # dp[0][0] will have the final answer
+        for r in range(m - 2, -1, -1):
+            for c in range(n - 2, -1, -1):
+                dp[r][c] = dp[r + 1][c] + dp[r][c + 1]
+
+        return dp[0][0]
+
+    def setZeroes(self, matrix: List[List[int]]) -> None:
+        """
+        Do not return anything, modify matrix in-place instead.
+        """
+        zeroLocations = set()
+        rows = len(matrix)
+        cols = len(matrix[0])
+        for r in range(rows):
+            for c in range(cols):
+                if matrix[r][c] == 0:
+                    zeroLocations.add((r, c))
+
+        def setToZeros(r, c, rows, cols):
+            # iterate over the whole row and column and set to 0
+            for i in range(cols):
+                matrix[r][i] = 0
+
+            for i in range(rows):
+                matrix[i][c] = 0
+
+        for zero in zeroLocations:
+            setToZeros(zero[0], zero[1], rows, cols)
 
 
 def buildList(nums):
@@ -1498,7 +1591,10 @@ solutions = Solution()
 # print(solutions.spiralOrderOptimal([[1,2,3],[4,5,6],[7,8,9]]))
 
 # print(solutions.insert([[1,3],[6,9]], [2, 5]))
-print(solutions.generateMatrix(3))
+# print(solutions.pivotIndex([-1,-1,-1,-1,-1,0]))
+
+# print(solutions.compress(["a","a","b","b","c","c","c"]))
+print(solutions.uniquePaths(3, 7))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
