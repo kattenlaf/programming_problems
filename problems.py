@@ -30,7 +30,7 @@ def solution_exploreIslands(arr):
             exploreIsland(arr, x0, y0, i+1, j, v)
         if j > 0 and arr[i][j-1] == 1:
             exploreIsland(arr, x0, y0, i, j-1, v)
-        if j < len(arr[i]) - 1 and arr[i][j+1]:
+        if j < len(arr[i]) - 1 and arr[i][j+1] == 1:
             exploreIsland(arr, x0, y0, i, j+1, v)
 
     count = 0
@@ -699,6 +699,7 @@ class Solution:
 
     def mergeKListsHeap(self, lists: Optional[ListNode]) -> Optional[ListNode]:
         minHeap = []
+        enumeratedList = enumerate(lists)
         for i, node in enumerate(lists):
             if node is not None:
                 heapq.heappush(minHeap, (node.val, i, node))
@@ -1368,13 +1369,16 @@ class Solution:
         return solution
 
     def canJump(self, nums: List[int]) -> bool:
-        n = len(nums)
-        if n <= 1:
+        length = len(nums)
+        if length <= 1:
             return True
-        goal = n - 1
-        for i in range(n - 2, -1, -1):
-            if nums[i] >= goal - i:
-                goal = i
+
+        goal = length - 1
+        for current_position in range(length - 2, -1, -1):
+            if nums[current_position] >= goal - current_position:
+                # if jumps from current position,
+                # is >= the distance between the goal and the current position, we can move the goal down
+                goal = current_position
 
         return goal == 0
 
@@ -1558,6 +1562,33 @@ class Solution:
         for zero in zeroLocations:
             setToZeros(zero[0], zero[1], rows, cols)
 
+    def areAlmostEqual(self, s1: str, s2: str) -> bool:
+        dict1 = defaultdict(int)
+        dict2 = defaultdict(int)
+        diff = 0
+        for i in range(len(s1)):
+            if s1[i] != s2[i]:
+                diff += 1
+                dict1[s1[i]] += 1
+                dict2[s2[i]] += 1
+
+        for key in dict1:
+            if key not in dict2 or dict2[key] != dict1[key]:
+                return False
+        for key in dict2:
+            if key not in dict1 or dict2[key] != dict1[key]:
+                return False
+
+        return True if (diff == 0 or diff == 2) else False
+
+    def removeDuplicates(self, nums: List[int]) -> int:
+        unduped = 2
+        for current in range(2, len(nums)):
+            if nums[current] != nums[unduped - 2]:
+                nums[unduped] = nums[current]
+                unduped += 1
+
+        return unduped
 
 def buildList(nums):
     dummy = ListNode()
@@ -1596,18 +1627,19 @@ solutions = Solution()
 # print(solutions.compress(["a","a","b","b","c","c","c"]))
 print(solutions.uniquePaths(3, 7))
 
+print(solutions.canJump([3,2,1,0,4]))
+
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
 # print(solutions.findMaxAverage([1,12,-5,-6,50,3], 4))
 # print(solutions.findKthLargest([3,2,1,5,6,4], 2))
 # (solutions.findPeakElement([1,2,1,3,5,6,4]))
 # print(solutions.search([5,1,2,3,4], 1))
+# list1 = buildList([1,4,5])
+# list2 = buildList([1,3,4])
+# list3 = buildList([2,6])
+# merged = solutions.mergeKListsHeap([list1, list2, list3])
+# printList(merged)
 
-"""
-list1 = buildList([1,4,5])
-list2 = buildList([1,3,4])
-list3 = buildList([2,6])
-merged = solutions.mergeKListsHeap([list1, list2, list3])
-printList(merged)
-"""
+print(solution_exploreIslands(input_list))
 
