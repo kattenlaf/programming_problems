@@ -1590,6 +1590,51 @@ class Solution:
 
         return unduped
 
+    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
+        solution = []
+
+        def isAnagram(s: str, t: str):
+            dictionary = defaultdict(int)
+            for char in s:
+                dictionary[char] += 1
+            for char in t:
+                dictionary[char] -= 1
+            for key in dictionary.keys():
+                if dictionary[key] != 0:
+                    return False
+
+            return True
+
+        # Sort based on length of the items
+        sorted_strs = sorted(strs, key=len)
+        i = 0
+        while i < len(sorted_strs):
+            sublist = [sorted_strs[i]]
+            j = i + 1
+            while j < len(sorted_strs):
+                if isAnagram(sorted_strs[i], sorted_strs[j]):
+                    sublist.append(sorted_strs[j])
+                    j += 1
+                else:
+                    break
+
+            i = j
+            solution.append(sublist)
+
+        return solution
+
+    def groupAnagramsOptimal(self, strs: List[str]) -> List[List[str]]:
+        solution_dict = defaultdict(list)
+        for cur_string in strs:
+            character_map = [0] * 26
+            for char in cur_string:
+                character_map[ord(char) - ord('a')] += 1
+
+            solution_dict[tuple(character_map)].append(cur_string)
+
+        return solution_dict.values()
+
+
 def buildList(nums):
     dummy = ListNode()
     current = dummy
@@ -1625,9 +1670,9 @@ solutions = Solution()
 # print(solutions.pivotIndex([-1,-1,-1,-1,-1,0]))
 
 # print(solutions.compress(["a","a","b","b","c","c","c"]))
-print(solutions.uniquePaths(3, 7))
+# print(solutions.uniquePaths(3, 7))
 
-print(solutions.canJump([3,2,1,0,4]))
+# print(solutions.canJump([3,2,1,0,4]))
 
 # print(solutions.minimumLength("ucvbutgkohgbcobqeyqwppbxqoynxeuuzouyvmydfhrprdbuzwqebwuiejoxsxdhbmuaiscalnteocghnlisxxawxgcjloevrdcj"))
 # print(solutions.canConstruct("aa", "aab"))
@@ -1641,5 +1686,7 @@ print(solutions.canJump([3,2,1,0,4]))
 # merged = solutions.mergeKListsHeap([list1, list2, list3])
 # printList(merged)
 
-print(solution_exploreIslands(input_list))
+#print(solution_exploreIslands(input_list))
+
+print(solutions.groupAnagramsOptimal(["act","pots","tops","cat","stop","hat"]))
 
