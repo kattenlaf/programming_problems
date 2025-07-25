@@ -1590,17 +1590,6 @@ class Solution:
 
         return unduped
 
-    def groupAnagrams(self, strs: List[str]) -> List[List[str]]:
-        solution_dict = defaultdict(list)
-        for cur_string in strs:
-            character_map = [0] * 26
-            for char in cur_string:
-                character_map[ord(char) - ord('a')] += 1
-
-            solution_dict[tuple(character_map)].append(cur_string)
-
-        return solution_dict.values()
-
 
 def buildList(nums):
     dummy = ListNode()
@@ -1655,5 +1644,5 @@ solutions = Solution()
 
 #print(solution_exploreIslands(input_list))
 
-print(solutions.groupAnagramsOptimal(["act","pots","tops","cat","stop","hat"]))
+print(solutions.groupAnagrams(["act","pots","tops","cat","stop","hat"]))
 
