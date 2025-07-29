@@ -1590,6 +1590,29 @@ class Solution:
 
         return unduped
 
+    def topKFrequent(self, nums: List[int], k: int) -> List[int]:
+        frequency = [[] for _ in range(len(nums) + 1)]
+        count = defaultdict(int)
+        for num in nums:
+            count[num] += 1
+
+        for num in count:
+            frequency[count[num]].append(num)
+
+        solution = []
+        for i in range(len(frequency) - 1, -1, -1):
+            if k <= 0:
+                break
+            if len(frequency[i]) > 0:
+                if len(frequency[i]) <= k:
+                    solution.extend(frequency[i])
+                    k -= len(frequency[i])
+                else:
+                    solution.extend(frequency[i][:k])
+                    k = 0
+
+        return solution
+
 
 def buildList(nums):
     dummy = ListNode()
