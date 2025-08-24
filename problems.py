@@ -1613,6 +1613,44 @@ class Solution:
 
         return solution
 
+    def longestSubarray(self, nums: List[int]) -> int:
+        solution = 0
+        if len(nums) >= 2:
+            last_sub_array_len = 0
+            cur_sub_array_len = 0
+            i = 0
+            seen_zero = False
+            while i < len(nums):
+                for j in range(i, len(nums)):
+                    if nums[j] != 1:
+                        seen_zero = True
+                        break
+                    cur_sub_array_len += 1
+                if not seen_zero:
+                    cur_sub_array_len = cur_sub_array_len - 1 if cur_sub_array_len > 0 else 0
+                    # Here we check a potential previous sub array
+                if i >= 2 and nums[i - 2] == 1:
+                    solution = max(last_sub_array_len + cur_sub_array_len, solution)
+                else:
+                    solution = max(solution, cur_sub_array_len)
+                i = j + 1
+                last_sub_array_len, cur_sub_array_len = cur_sub_array_len, 0
+        return solution
+
+    def longestSubarrayBetter(self, nums: List[int]) -> int:
+        lp, rp, num_zeros, sol = 0, 0, 0, 0
+        for rp in range(len(nums)):
+            if nums[rp] == 0:
+                num_zeros += 1
+
+            while num_zeros > 1:
+                if nums[lp] == 0:
+                    num_zeros -= 1
+                lp += 1
+
+            sol = max(sol, rp - lp)
+
+        return sol
 
 def buildList(nums):
     dummy = ListNode()
