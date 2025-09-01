@@ -1693,6 +1693,44 @@ class Solution:
 
         return dummy.next
 
+    def encode(self, strs: List[str]) -> str:
+        if not strs:
+            return ""
+
+        sizes, sol = [], ""
+        for string in strs:
+            sol += str(len(string))
+            sol += ','
+        sol += "$"
+        for string in strs:
+            sol += string
+        # '4,4,4,3,#neetcodeloveyou'
+        return sol
+
+    def decode(self, s: str) -> List[str]:
+        sol = []
+        if len(s) == 0:
+            return sol
+        pos = 0
+        size = ''
+        sizes = []
+        while s[pos] != "$":
+            if s[pos] == ',':
+                sizes.append(int(size))
+                size = ''
+            else:
+                size += s[pos]
+            pos += 1
+        # [4, 4, 4, 3] after
+        # remaining string after $
+        pos += 1
+        []
+        for size in sizes:
+            sol.append(s[pos:pos + size])
+            pos += size
+
+        return sol
+
     def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
         solution = []
         node_deque = deque()
