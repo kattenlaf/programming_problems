@@ -3,6 +3,7 @@ from typing import List
 from typing import Optional
 from collections import defaultdict, deque
 import heapq
+from queue import Queue
 
 
 class ListNode:
@@ -1651,6 +1652,95 @@ class Solution:
             sol = max(sol, rp - lp)
 
         return sol
+
+    def reverseBetween(self, head: Optional[ListNode], left: int, right: int) -> Optional[ListNode]:
+        # base case
+        if head is None or left == right:
+            return head
+
+        dummy_head = ListNode(0, head)
+        prev = dummy_head
+        # find the node to the left of the start of where we will start the reverse
+        for i in range(left - 1):
+            prev = prev.next
+
+        cur = prev.next
+        # for a period of length of right - left, we will keep moving cur down to where right ends
+        # placing each node adjacent to it on its right side to prev.next thus effectively reversing the list
+        for i in range(right - left):
+            temp = cur.next
+            cur.next = temp.next
+            temp.next = prev.next
+            prev.next = temp
+
+        return dummy_head.next
+
+    def deleteDuplicates(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        dummy = ListNode(0)
+        dummy.next = head
+        prev = dummy
+        current = head
+
+        while current is not None and current.next is not None:
+            if current.val == current.next.val:
+                while current.next is not None and current.val == current.next.val:
+                    current = current.next
+                prev.next = current.next
+            else:
+                prev = prev.next
+
+            current = current.next
+
+        return dummy.next
+
+    def levelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        solution = []
+        node_deque = deque()
+        if root:
+            node_deque.append(root)
+        while node_deque:
+            current_level_values = []
+            for _ in range(len(node_deque)):
+                node = node_deque.popleft()
+                current_level_values.append(node.val)
+                if node.left:
+                    node_deque.append(node.left)
+                if node.right:
+                    node_deque.append(node.right)
+
+            solution.append(current_level_values)
+
+        return solution
+
+    def zigzagLevelOrder(self, root: Optional[TreeNode]) -> List[List[int]]:
+        reverse = False
+        solution = []
+        node_deque = deque()
+        if root:
+            node_deque.append(root)
+        while node_deque:
+            current_level_values = []
+            for _ in range(len(node_deque)):
+                if not reverse:
+                    node = node_deque.popleft()
+                    current_level_values.append(node.val)
+                    if node.left:
+                        node_deque.append(node.left)
+                    if node.right:
+                        node_deque.append(node.right)
+                else:
+                    node = node_deque.pop()
+                    current_level_values.append(node.val)
+                    if node.right:
+                        node_deque.appendleft(node.right)
+                    if node.left:
+                        node_deque.appendleft(node.left)
+
+            reverse = not reverse
+            solution.append(current_level_values)
+
+        return solution
+
 
 def buildList(nums):
     dummy = ListNode()
