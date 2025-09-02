@@ -1817,6 +1817,27 @@ class Solution:
 
         return None
 
+    def isHappy(self, n: int) -> bool:
+        def square_digits(n: int) -> int:
+            sum_squares = 0
+            while n != 0:
+                digit = n % 10
+                sum_squares = sum_squares + (digit ** 2)
+                n //= 10
+
+            return sum_squares
+
+        tortoise = n
+        hare = n
+        while True:
+            tortoise = square_digits(tortoise)
+            hare = square_digits(square_digits(hare))
+            if tortoise == hare:
+                if tortoise == 1:
+                    return True
+                else:
+                    return False
+
 def buildList(nums):
     dummy = ListNode()
     current = dummy
