@@ -1779,6 +1779,43 @@ class Solution:
 
         return solution
 
+    def isValidBST(self, root: Optional[TreeNode]) -> bool:
+        def isValid(node, minval, maxval):
+            if not node:
+                return True
+
+            if not (minval < node.val < maxval):
+                return False
+            return isValid(node.left, minval, node.val) and isValid(node.right, node.val, maxval)
+
+        return isValid(root, float("-inf"), float("inf"))
+
+    def singleNumber(self, nums: List[int]) -> int:
+        ones = 0
+        twos = 0
+        for num in nums:
+            ones = (ones ^ num) & ~twos
+            twos = (twos ^ num) & ~ones
+
+        return ones
+
+    # floyds tortoise and hare
+    def detectCycle(self, head: Optional[ListNode]) -> Optional[ListNode]:
+        slow = fast = head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+
+            if slow == fast:
+                # cycle detected, place slow back at start and iterate at same pace until encounter each other again
+                slow = head
+                while slow != fast:
+                    slow = slow.next
+                    fast = fast.next
+
+                return slow
+
+        return None
 
 def buildList(nums):
     dummy = ListNode()
